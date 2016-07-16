@@ -13,32 +13,32 @@
 
 using namespace std;
 
-vector<int> bincount(vector<int> &x){
-    int num_bins = *max_element(x.begin(), x.end());
-    vector<int> counts(num_bins, 0);
+vector<int> bincount(const vector<int>& x){
+    auto num_bins = *max_element(x.cbegin(), x.cend());
+    vector<int> counts(num_bins+1, 0);
 
     for(int elem: x) counts[elem]++;
 
     return counts;
 }
 
-vector<int> hist2d(vector<int> &x, vector<int> &y){
-    int num_bins = max(*max_element(x.begin(), x.end()),
-                       *max_element(y.begin(), y.end()));
-    vector<int> xy((int) x.size(), 0);
+vector<int> hist2d(const vector<int>& x, const vector<int>& y){
+    vector<int> xy(x.size(), 0);
 
-    transform(x.begin(), x.end(), xy.begin(),
-              bind1st(multiplies<int>(), num_bins));
-    transform(y.begin(), y.end(), xy.begin(), x.begin(), plus<int>());
+    auto numYBins = *max_element(y.cbegin(), y.cend());
+
+
+    transform(x.begin(), x.end(), xy.begin(), bind1st(multiplies<int>(), numYBins));
+    transform(y.begin(), y.end(), xy.begin(), xy.begin(), plus<int>());
 
     return xy;
 }
 
 vector<vector<pair<int, int>>> shardIndices(int n, int numThreads){
+    vector<vector<pair<int, int>>> shardedVector;
     int i = 0, j = 0;
     int numElem = n*(n+1)/2;
     int threadSize = numElem/numThreads;
-    vector<vector<pair<int, int>>> shardedVector;
 
     /*
      * The pairs of MI indices are split up so in the following way:
@@ -77,8 +77,8 @@ vector<vector<pair<int, int>>> shardIndices(int n, int numThreads){
 }
 
 vector<vector<int>> readCSV(const char* filename, const char* delimiter) {
-    int i = 0;
     vector<vector<int>> matrix;
+    int i = 0;
 
     printf("Reading file: %s\n", filename);
 
@@ -105,8 +105,7 @@ vector<vector<int>> readCSV(const char* filename, const char* delimiter) {
     return matrix;
 }
 
-void dumpCSV(const char* filename, const char* delimiter,
-             vector<vector<double>> &miMatrix){
+void dumpCSV(const char* filename, const char* delimiter, vector<vector<double>> &miMatrix){
 
     ofstream out(filename);
     int matDim = (int) miMatrix.size();

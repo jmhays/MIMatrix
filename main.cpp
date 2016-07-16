@@ -67,23 +67,22 @@ int main(int argc, char *argv[]) {
     /*
      * READ INPUT FILE
      */
-    vector<vector<int>> data = readCSV(globalArgs.inFileName,
+    auto data = readCSV(globalArgs.inFileName,
                                        globalArgs.delimiter);
 
-    int numFeatures = (int) data.size();
+    auto numFeatures = data.size();
 
     /*
      * BEGIN MI CALCULATIONS
      */
     vector<vector<double>> miMatrix(numFeatures, vector<double>(numFeatures, 0));
-    vector<vector<pair<int, int>>> shardedIndices =
-            shardIndices(numFeatures, globalArgs.numThreads);
+    auto shardedIndices = shardIndices(numFeatures, globalArgs.numThreads);
 
     printf("Starting a pool of %i threads\n", globalArgs.numThreads);
     clock_t t;
     t = clock();
     
-//#pragma omp parallel for
+#pragma omp parallel for
     for(int i = 0; i < globalArgs.numThreads; i++) {
         miMatrixBlock(data, miMatrix, shardedIndices[i]);
     }
