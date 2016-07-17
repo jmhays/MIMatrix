@@ -25,7 +25,7 @@ vector<int> bincount(const vector<int>& x){
 vector<int> hist2d(const vector<int>& x, const vector<int>& y){
     vector<int> xy(x.size(), 0);
 
-    auto numYBins = *max_element(y.cbegin(), y.cend());
+    auto numYBins = *max_element(y.cbegin(), y.cend()) + 1;
 
 
     transform(x.begin(), x.end(), xy.begin(), bind1st(multiplies<int>(), numYBins));
@@ -34,11 +34,11 @@ vector<int> hist2d(const vector<int>& x, const vector<int>& y){
     return xy;
 }
 
-vector<vector<pair<int, int>>> shardIndices(int n, int numThreads){
-    vector<vector<pair<int, int>>> shardedVector;
-    int i = 0, j = 0;
-    int numElem = n*(n+1)/2;
-    int threadSize = numElem/numThreads;
+vector<vector<pair<long, long>>> shardIndices(long n, long numThreads){
+    vector<vector<pair<long, long>>> shardedVector;
+    long i = 0, j = 0;
+    long numElem = n*(n+1)/2;
+    auto threadSize = numElem/numThreads;
 
     /*
      * The pairs of MI indices are split up so in the following way:
@@ -47,15 +47,15 @@ vector<vector<pair<int, int>>> shardIndices(int n, int numThreads){
      * calculations, numElem, may not divide evenly into numThreads)
      * */
 
-    int elemCount = 0;
+    long elemCount = 0;
     for (int thread = 0; thread < numThreads; thread++){
 
-        vector<pair<int, int>> aShard;
+        vector<pair<long, long>> aShard;
 
         /* First numThreads-1 threads */
         if (thread < numThreads - 1){
-            for (int k = elemCount; k < elemCount + threadSize; k++) {
-                j = (int) ((-1 + sqrt(8 * k + 1)) / 2);
+            for (long k = elemCount; k < elemCount + threadSize; k++) {
+                j = (long) ((-1 + sqrt(8 * k + 1)) / 2);
                 i = k - j * (j + 1) / 2;
                 aShard.push_back({i, j});
             }
@@ -64,8 +64,8 @@ vector<vector<pair<int, int>>> shardIndices(int n, int numThreads){
 
         /* Last thread */
         else{
-            for (int k = elemCount; k < numElem; k++){
-                j = (int) ((-1 + sqrt(8 * k + 1)) / 2);
+            for (long k = elemCount; k < numElem; k++){
+                j = (long) ((-1 + sqrt(8 * k + 1)) / 2);
                 i = k - j * (j + 1) / 2;
                 aShard.push_back({i, j});
             }
@@ -105,7 +105,7 @@ vector<vector<int>> readCSV(const char* filename, const char* delimiter) {
     return matrix;
 }
 
-void dumpCSV(const char* filename, const char* delimiter, vector<vector<double>> &miMatrix){
+void dumpCSV(const char* filename, const char* delimiter, vector<vector<float>> &miMatrix){
 
     ofstream out(filename);
     int matDim = (int) miMatrix.size();

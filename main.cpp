@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include "MIUtils.h"
 #include "MI.h"
+#include <omp.h>
 
 struct globalArgs_t {
     const char *inFileName;     /* -f option */
@@ -75,9 +76,9 @@ int main(int argc, char *argv[]) {
     /*
      * BEGIN MI CALCULATIONS
      */
-    vector<vector<double>> miMatrix(numFeatures, vector<double>(numFeatures, 0));
+    vector<vector<float>> miMatrix(numFeatures, vector<float>(numFeatures, 0));
     auto shardedIndices = shardIndices(numFeatures, globalArgs.numThreads);
-
+    printf("Main sees %i available threads\n", omp_get_max_threads());
     printf("Starting a pool of %i threads\n", globalArgs.numThreads);
     clock_t t;
     t = clock();
