@@ -88,7 +88,8 @@ int main(int argc, char *argv[]) {
         miMatrixBlock(data, miMatrix, shardedIndices[i]);
     }
     t = (clock() - t);
-    printf("Time to complete all MI calculations: %f sec", (float)t/CLOCKS_PER_SEC);
+    printf("Dear Git,\nThere was actually a change you numbskull.\nSincerely, Hays");
+    printf("Time to complete all MI calculations: %f sec\n", (float)t/CLOCKS_PER_SEC);
 
     dumpCSV(globalArgs.outFileName, globalArgs.delimiter, miMatrix);
 
