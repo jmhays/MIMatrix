@@ -8,7 +8,7 @@
 float entropy(const vector<int>& arr);
 float mi(const vector<int> &x, const vector<int> &y);
 void miMatrixBlock(const vector<vector<int>>& data, vector<vector<float>>& mi_matrix,
-                   const vector<pair<long, long>>& idx_subset);
+                   const vector<pair<long, long>>& idx_subset, bool metric);
 
 #endif //MIMATRIX_MI_H
 

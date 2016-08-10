@@ -9,9 +9,10 @@ struct globalArgs_t {
     const char *outFileName;    /* -o option */
     int numThreads;              /* -n option */
     const char *delimiter;      /* -d option */
+    bool metric;                 /* -m option */
 } globalArgs;
 
-static const char *optString = "f:o:n:d:h?";
+static const char *optString = "f:o:n:d:m:h?";
 
 void display_usage(void) {
     puts("\n========MI MATRIX CALCULATOR========\n");
@@ -20,6 +21,7 @@ void display_usage(void) {
     puts("-d\t\tDelimiter of csv file");
     puts("-o\t\tOutput filename for MI matrix.");
     puts("-n\t\tInteger number of threads for parallel calculation");
+    puts("-m\t\tIf present, MI metric is calculated in place of mutual information");
     exit( EXIT_FAILURE );
 }
 
@@ -40,6 +42,7 @@ int main(int argc, char *argv[]) {
     globalArgs.outFileName = NULL;
     globalArgs.numThreads = 1;  // default is to run sequentially
     globalArgs.delimiter = ",";
+    globalArgs.metric = 0;
 
     opt = getopt(argc, argv, optString);
     while (opt != -1) {
@@ -55,6 +58,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'd':
                 globalArgs.delimiter = optarg;
+            case 'm':
+                globalArgs.metric = atoi(optarg);
+                break;
             case 'h':
             case '?':
                 display_usage();
@@ -85,10 +91,9 @@ int main(int argc, char *argv[]) {
     
 #pragma omp parallel for
     for(int i = 0; i < globalArgs.numThreads; i++) {
-        miMatrixBlock(data, miMatrix, shardedIndices[i]);
+        miMatrixBlock(data, miMatrix, shardedIndices[i], globalArgs.metric);
     }
     t = (clock() - t);
-    printf("Dear Git,\nThere was actually a change you numbskull.\nSincerely, Hays");
     printf("Time to complete all MI calculations: %f sec\n", (float)t/CLOCKS_PER_SEC);
 
     dumpCSV(globalArgs.outFileName, globalArgs.delimiter, miMatrix);
