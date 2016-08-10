@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
                 break;
             case 'd':
                 globalArgs.delimiter = optarg;
+                break;
             case 'h':
             case '?':
                 display_usage();
