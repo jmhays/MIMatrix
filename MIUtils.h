@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "csvparser.h"
 #include <fstream>
+#include <vector>
 
 using namespace std;
 

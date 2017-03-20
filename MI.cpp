@@ -44,5 +44,6 @@ void miMatrixBlock(const vector<vector<int>>& data, vector<vector<float>>& mi_ma
         j = idxs.second;
 
         mi_matrix[i][j] = mi(data[i], data[j], metric);
+        mi_matrix[j][i] = mi_matrix[i][j];
     }
 }

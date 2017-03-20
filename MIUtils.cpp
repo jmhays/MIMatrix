@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "csvparser.h"
 #include <fstream>
+#include <vector>
+#include <cmath>
 
 using namespace std;
 
