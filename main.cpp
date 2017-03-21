@@ -86,6 +86,8 @@ int main(int argc, char *argv[]) {
 
     auto numFeatures = data.size();
     auto numPairs = numFeatures*(numFeatures-1)/2;
+    printf("Number of MI calculations to perform: %li\n", numPairs);
+    printf("Number of features: %li\n", numFeatures);
 
     /*
      * BEGIN MI CALCULATIONS

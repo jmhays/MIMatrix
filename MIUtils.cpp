@@ -105,9 +105,9 @@ vector<vector<int>> readCSV(const char* filename, const char* delimiter) {
 void dumpMIMat(const char* filename, vector<float> &miMatrix){
 
     ofstream out(filename);
-    int matDim = (int) miMatrix.size();
+    auto matDim = miMatrix.size();
 
-    for (int i=0; i < matDim; i++){
+    for (auto i=0; i < matDim; i++){
         out << miMatrix[i] << endl;
     }
 }
