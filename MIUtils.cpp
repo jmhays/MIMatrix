@@ -34,7 +34,7 @@ vector<int> hist2d(const vector<int>& x, const vector<int>& y){
 vector<vector<pair<long, long>>> shardIndices(long n, long numThreads){
     vector<vector<pair<long, long>>> shardedVector;
     long i = 0, j = 0;
-    long numElem = n*(n+1)/2;
+    long numElem = n*(n-1)/2;
     auto threadSize = numElem/numThreads;
 
     /*
@@ -52,8 +52,8 @@ vector<vector<pair<long, long>>> shardIndices(long n, long numThreads){
         /* First numThreads-1 threads */
         if (thread < numThreads - 1){
             for (long k = elemCount; k < elemCount + threadSize; k++) {
-                j = (long) ((-1 + sqrt(8 * k + 1)) / 2);
-                i = k - j * (j + 1) / 2;
+                i = n - 2 - floor(sqrt(-8*k+4*n*(n-1) - 7)/2.0 - 0.5);
+                j = k + i + 1 - n*(n-1)/2 + (n-i)*((n-i)-1)/2;
                 aShard.push_back({i, j});
             }
             elemCount += threadSize;
@@ -62,8 +62,8 @@ vector<vector<pair<long, long>>> shardIndices(long n, long numThreads){
             /* Last thread */
         else{
             for (long k = elemCount; k < numElem; k++){
-                j = (long) ((-1 + sqrt(8 * k + 1)) / 2);
-                i = k - j * (j + 1) / 2;
+                i = n - 2 - floor(sqrt(-8*k+4*n*(n-1) - 7)/2.0 - 0.5);
+                j = k + i + 1 - n*(n-1)/2 + (n-i)*((n-i)-1)/2;
                 aShard.push_back({i, j});
             }
         }
@@ -102,19 +102,28 @@ vector<vector<int>> readCSV(const char* filename, const char* delimiter) {
     return matrix;
 }
 
-void dumpCSV(const char* filename, const char* delimiter, vector<vector<float>> &miMatrix){
+void dumpMIMat(const char* filename, vector<float> &miMatrix){
 
     ofstream out(filename);
     int matDim = (int) miMatrix.size();
 
     for (int i=0; i < matDim; i++){
-        for (int j=0; j < matDim; j++){
-            if (j==matDim-1){
-                out << miMatrix[i][j] << endl;
-            }
-            else{
-                out << miMatrix[i][j] << delimiter;
-            }
+        out << miMatrix[i] << endl;
+    }
+}
+
+void dumpIndices(const char* filename, vector<vector<pair<long, long>>> &shardedIndices, long n){
+
+    FILE * out;
+    out = fopen(filename, "w");
+    auto nThreads = shardedIndices.size();
+
+    for (int i = 0; i < nThreads; i++){
+        for (int j = 0; j < shardedIndices[i].size(); j++){
+            auto firstPair = shardedIndices[i][j].first;
+            auto secondPair = shardedIndices[i][j].second;
+            auto k = (n*(n-1)/2) - (n-firstPair)*((n-firstPair)-1)/2 + secondPair - firstPair - 1;
+            fprintf(out, "%li %li %li\n", k, firstPair, secondPair);
         }
     }
 }

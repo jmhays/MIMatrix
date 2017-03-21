@@ -17,6 +17,6 @@ vector<int> bincount(const vector<int>& x);
 vector<int> hist2d(const vector<int>& x, const vector<int>& y);
 vector<vector<pair<long, long>>> shardIndices(long n, long numThreads);
 vector<vector<int>> readCSV(const char* filename, const char* delimiter);
-void dumpCSV(const char* filename, const char* delimiter, vector<vector<float>> &miMatrix);
-
+void dumpMIMat(const char* filename, vector<float> &miMatrix);
+void dumpIndices(const char* filename, vector<vector<pair<long, long>>> &shardedIndices, long n);
 #endif //MIMATRIX_MIUTILS_H

@@ -7,12 +7,13 @@
 struct globalArgs_t {
     const char *inFileName;     /* -f option */
     const char *outFileName;    /* -o option */
+    const char *indexFileName;  /* -i option */
     int numThreads;              /* -n option */
     const char *delimiter;      /* -d option */
     bool metric;                /* -m option*/
 } globalArgs;
 
-static const char *optString = "f:o:n:d:mh?";
+static const char *optString = "f:o:n:i:d:mh?";
 
 void display_usage(void) {
     puts("\n========MI MATRIX CALCULATOR========\n");
@@ -22,6 +23,7 @@ void display_usage(void) {
     puts("-m\t\tMetric option");
     puts("-o\t\tOutput filename for MI matrix.");
     puts("-n\t\tInteger number of threads for parallel calculation");
+    puts("-i\t\tIndex filename");
     exit( EXIT_FAILURE );
 }
 
@@ -40,6 +42,7 @@ int main(int argc, char *argv[]) {
     // Initialize global arguments
     globalArgs.inFileName = NULL;
     globalArgs.outFileName = NULL;
+    globalArgs.indexFileName = NULL;
     globalArgs.numThreads = 1;  // default is to run sequentially
     globalArgs.delimiter = ",";
     globalArgs.metric = 0;
@@ -52,6 +55,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'o':
                 globalArgs.outFileName = optarg;
+                break;
+            case 'i':
+                globalArgs.indexFileName = optarg;
                 break;
             case 'n':
                 globalArgs.numThreads = atoi(optarg);
@@ -79,12 +85,14 @@ int main(int argc, char *argv[]) {
                                        globalArgs.delimiter);
 
     auto numFeatures = data.size();
+    auto numPairs = numFeatures*(numFeatures-1)/2;
 
     /*
      * BEGIN MI CALCULATIONS
      */
-    vector<vector<float>> miMatrix(numFeatures, vector<float>(numFeatures, 0));
+    vector<float> miMatrix(numPairs, 0);
     auto shardedIndices = shardIndices(numFeatures, globalArgs.numThreads);
+
     printf("Main sees %i available threads\n", omp_get_max_threads());
     printf("Starting a pool of %i threads\n", globalArgs.numThreads);
     clock_t t;
@@ -97,6 +105,7 @@ int main(int argc, char *argv[]) {
     t = (clock() - t);
     printf("Time to complete all MI calculations: %f sec\n", (float)t/CLOCKS_PER_SEC);
 
-    dumpCSV(globalArgs.outFileName, globalArgs.delimiter, miMatrix);
+    dumpMIMat(globalArgs.outFileName, miMatrix);
+    dumpIndices(globalArgs.indexFileName, shardedIndices, numFeatures);
 
 }
