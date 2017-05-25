@@ -4,7 +4,7 @@
 #include "MI.h"
 #include <omp.h>
 
-struct globalArgs_t {
+struct {
     const char *inFileName;     /* -f option */
     const char *outFileName;    /* -o option */
     const char *indexFileName;  /* -i option */
@@ -17,7 +17,8 @@ static const char *optString = "f:o:n:i:d:mh?";
 
 void display_usage(void) {
     puts("\n========MI MATRIX CALCULATOR========\n");
-    puts("Information - calculates MI matrix from input file");
+    puts("Information - calculates pairwise MI matrix from input file\n");
+    puts("(rows are features)\n");
     puts("-f\t\tFull path to input file.");
     puts("-d\t\tDelimiter of csv file");
     puts("-m\t\tMetric option");
