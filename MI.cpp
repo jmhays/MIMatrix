@@ -21,7 +21,7 @@ float entropy(const vector<int>& arr){
 float mi(const vector<int> &x, const vector<int> &y, bool metric){
     float Hx, Hy, Hxy, solution;
     auto n_samples = x.size();
-    float log_n = log(n_samples);
+    float log_n = (float) log(n_samples);
 
     Hx = entropy(bincount(x))/n_samples + log_n;
     Hy = entropy(bincount(y))/n_samples + log_n;
