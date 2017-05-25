@@ -37,7 +37,7 @@ float mi(const vector<int> &x, const vector<int> &y, bool metric){
 
 void miMatrixBlock(const vector<vector<int>>& data, vector<float>& mi_matrix,
                    const vector<pair<long, long>>& idx_subset, bool metric){
-    int i = 0, j = 0;
+    long i = 0, j = 0;
     auto n = data.size();
 
     for (const auto& idxs : idx_subset){
